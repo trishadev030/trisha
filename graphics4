@@ -1,0 +1,178 @@
+#include <GL/glut.h>
+#include <cmath>
+
+// Define M_PI if it's not defined
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+// Window size
+int width = 800;
+int height = 600;
+
+// Transformation parameters
+float scaleX = 1.0f;
+float scaleY = 1.0f;
+float scaleZ = 1.0f;
+float rotationAngleX = 0.0f;
+float rotationAngleY = 0.0f;
+float rotationAngleZ = 0.0f;
+float translateX = 0.0f;
+float translateY = 0.0f;
+float translateZ = -5.0f; // Initial translation to see the cube
+
+void drawCube() {
+    glBegin(GL_QUADS);
+
+    // Front face (red)
+    glColor3f(1.0f, 0.0f, 0.0f);
+    glVertex3f(-0.5f, -0.5f, 0.5f);
+    glVertex3f(0.5f, -0.5f, 0.5f);
+    glVertex3f(0.5f, 0.5f, 0.5f);
+    glVertex3f(-0.5f, 0.5f, 0.5f);
+
+    // Back face (green)
+    glColor3f(0.0f, 1.0f, 0.0f);
+    glVertex3f(-0.5f, -0.5f, -0.5f);
+    glVertex3f(0.5f, -0.5f, -0.5f);
+    glVertex3f(0.5f, 0.5f, -0.5f);
+    glVertex3f(-0.5f, 0.5f, -0.5f);
+
+    // Left face (blue)
+    glColor3f(0.0f, 0.0f, 1.0f);
+    glVertex3f(-0.5f, -0.5f, -0.5f);
+    glVertex3f(-0.5f, -0.5f, 0.5f);
+    glVertex3f(-0.5f, 0.5f, 0.5f);
+    glVertex3f(-0.5f, 0.5f, -0.5f);
+
+    // Right face (yellow)
+    glColor3f(1.0f, 1.0f, 0.0f);
+    glVertex3f(0.5f, -0.5f, -0.5f);
+    glVertex3f(0.5f, -0.5f, 0.5f);
+    glVertex3f(0.5f, 0.5f, 0.5f);
+    glVertex3f(0.5f, 0.5f, -0.5f);
+
+    // Top face (cyan)
+    glColor3f(0.0f, 1.0f, 1.0f);
+    glVertex3f(-0.5f, 0.5f, -0.5f);
+    glVertex3f(0.5f, 0.5f, -0.5f);
+    glVertex3f(0.5f, 0.5f, 0.5f);
+    glVertex3f(-0.5f, 0.5f, 0.5f);
+
+    // Bottom face (magenta)
+    glColor3f(1.0f, 0.0f, 1.0f);
+    glVertex3f(-0.5f, -0.5f, -0.5f);
+    glVertex3f(0.5f, -0.5f, -0.5f);
+    glVertex3f(0.5f, -0.5f, 0.5f);
+    glVertex3f(-0.5f, -0.5f, 0.5f);
+
+    glEnd();
+}
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glPushMatrix();
+
+    // Apply transformations
+    glTranslatef(translateX, translateY, translateZ);
+    glRotatef(rotationAngleX, 1.0f, 0.0f, 0.0f);
+    glRotatef(rotationAngleY, 0.0f, 1.0f, 0.0f);
+    glRotatef(rotationAngleZ, 0.0f, 0.0f, 1.0f);
+    glScalef(scaleX, scaleY, scaleZ);
+
+    // Draw the cube
+    drawCube();
+
+    glPopMatrix();
+
+    glutSwapBuffers();
+}
+
+void reshape(int w, int h) {
+    glViewport(0, 0, w, h);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(45.0, (double)w / (double)h, 1.0, 100.0);
+    glMatrixMode(GL_MODELVIEW);
+
+    width = w;
+    height = h;
+}
+
+void keyboard(unsigned char key, int x, int y) {
+    switch (key) {
+    case 'x': // Rotate around X axis
+        rotationAngleX += 10.0f;
+        if (rotationAngleX >= 360.0f) rotationAngleX -= 360.0f;
+        break;
+    case 'X': // Rotate around X axis in opposite direction
+        rotationAngleX -= 10.0f;
+        if (rotationAngleX < 0.0f) rotationAngleX += 360.0f;
+        break;
+    case 'y': // Rotate around Y axis
+        rotationAngleY += 10.0f;
+        if (rotationAngleY >= 360.0f) rotationAngleY -= 360.0f;
+        break;
+    case 'Y': // Rotate around Y axis in opposite direction
+        rotationAngleY -= 10.0f;
+        if (rotationAngleY < 0.0f) rotationAngleY += 360.0f;
+        break;
+    case 'z': // Rotate around Z axis
+        rotationAngleZ += 10.0f;
+        if (rotationAngleZ >= 360.0f) rotationAngleZ -= 360.0f;
+        break;
+    case 'Z': // Rotate around Z axis in opposite direction
+        rotationAngleZ -= 10.0f;
+        if (rotationAngleZ < 0.0f) rotationAngleZ += 360.0f;
+        break;
+    case '+': // Scale up
+        scaleX += 0.1f;
+        scaleY += 0.1f;
+        scaleZ += 0.1f;
+        break;
+    case '-': // Scale down
+        scaleX -= 0.1f;
+        scaleY -= 0.1f;
+        scaleZ -= 0.1f;
+        break;
+    case 'u': // Move up
+        translateY += 0.1f;
+        break;
+    case 'd': // Move down
+        translateY -= 0.1f;
+        break;
+    case 'l': // Move left
+        translateX -= 0.1f;
+        break;
+    case 'r': // Move right
+        translateX += 0.1f;
+        break;
+    case 'i': // Move forward
+        translateZ += 0.1f;
+        break;
+    case 'o': // Move backward
+        translateZ -= 0.1f;
+        break;
+    case 27: // ESC key to exit
+        exit(0);
+    }
+    glutPostRedisplay();
+}
+
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitWindowSize(width, height);
+    glutCreateWindow("3D Geometric Operations");
+
+    glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
+    glutKeyboardFunc(keyboard);
+
+    glEnable(GL_DEPTH_TEST);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+    glutMainLoop();
+    return 0;
+}
