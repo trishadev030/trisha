@@ -1,0 +1,59 @@
+#include <GL/glut.h>
+#include <cmath>
+
+const float PI = 3.14159265358979323846f;
+float windowWidth = 800;
+float windowHeight = 600;
+
+void drawHexagon() {
+    int numSides = 6;
+    float radius = 0.5f; // radius of the hexagon
+
+    glBegin(GL_POLYGON);
+    for (int i = 0; i < numSides; ++i) {
+        float angle = 2 * PI * i / numSides;
+        float x = radius * cos(angle);
+        float y = radius * sin(angle);
+        glVertex2f(x, y);
+    }
+    glEnd();
+}
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+    glLoadIdentity();
+    drawHexagon();
+    glutSwapBuffers();
+}
+
+void reshape(int width, int height) {
+    if (height == 0) height = 1; // prevent divide by zero
+    float aspectRatio = (float)width / height;
+
+    glViewport(0, 0, width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    if (width >= height) {
+        gluOrtho2D(-aspectRatio, aspectRatio, -1.0, 1.0);
+    }
+    else {
+        gluOrtho2D(-1.0, 1.0, -1.0 / aspectRatio, 1.0 / aspectRatio);
+    }
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+}
+
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitWindowSize(windowWidth, windowHeight);
+    glutCreateWindow("Hexagon Reshape");
+
+    glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
+
+    glutMainLoop();
+    return 0;
+}
