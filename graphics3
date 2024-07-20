@@ -1,0 +1,110 @@
+#include <GL/glut.h>
+#include <cmath>
+
+// Define M_PI if it's not defined
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+// Window size
+int width = 800;
+int height = 600;
+
+// Transformation parameters
+float scaleX = 1.0f;
+float scaleY = 1.0f;
+float rotationAngle = 0.0f;
+float translateX = 0.0f;
+float translateY = 0.0f;
+
+void drawSquare() {
+    glBegin(GL_POLYGON);
+    glVertex2f(-0.5f, -0.5f);
+    glVertex2f(0.5f, -0.5f);
+    glVertex2f(0.5f, 0.5f);
+    glVertex2f(-0.5f, 0.5f);
+    glEnd();
+}
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glPushMatrix();
+
+    // Apply transformations
+    glTranslatef(translateX, translateY, 0.0f);
+    glRotatef(rotationAngle, 0.0f, 0.0f, 1.0f);
+    glScalef(scaleX, scaleY, 1.0f);
+
+    // Draw the square
+    drawSquare();
+
+    glPopMatrix();
+
+    glutSwapBuffers();
+}
+
+void reshape(int w, int h) {
+    glViewport(0, 0, w, h);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(-1.0, 1.0, -1.0, 1.0);
+    glMatrixMode(GL_MODELVIEW);
+
+    width = w;
+    height = h;
+}
+
+void keyboard(unsigned char key, int x, int y) {
+    switch (key) {
+    case 'r': // Rotate
+        rotationAngle += 10.0f;
+        if (rotationAngle >= 360.0f) rotationAngle -= 360.0f;
+        break;
+    case 'R': // Rotate in opposite direction
+        rotationAngle -= 10.0f;
+        if (rotationAngle < 0.0f) rotationAngle += 360.0f;
+        break;
+    case '+': // Scale up
+        scaleX += 0.1f;
+        scaleY += 0.1f;
+        break;
+    case '-': // Scale down
+        scaleX -= 0.1f;
+        scaleY -= 0.1f;
+        break;
+    case 'U': // Move up
+        translateY += 0.1f;
+        break;
+    case 'D': // Move down
+        translateY -= 0.1f;
+        break;
+    case 'L': // Move left
+        translateX -= 0.1f;
+        break;
+    case 'l': // Move right
+        translateX += 0.1f;
+        break;
+    case 27: // ESC key to exit
+        exit(0);
+    }
+    glutPostRedisplay();
+}
+
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitWindowSize(width, height);
+    glutCreateWindow("2D Geometric Operations");
+
+    glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
+    glutKeyboardFunc(keyboard);
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+    glutMainLoop();
+    return 0;
+}
+
+
