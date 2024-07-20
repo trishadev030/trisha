@@ -1,0 +1,64 @@
+#include <GL/glut.h>
+
+
+float size = 0.1f;
+
+void renderSquare(float size) {
+    glBegin(GL_QUADS);
+    glVertex2f(-size, -size);
+    glVertex2f(size, -size);
+    glVertex2f(size, size);
+    glVertex2f(-size, size);
+    glEnd();
+}
+
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+    renderSquare(size);
+    glutSwapBuffers();
+}
+
+
+void keyboard(unsigned char key, int x, int y) {
+    if (key == 'w') {
+        size += 0.01f; 
+    }
+    else if (key == 's') {
+        size -= 0.01f; 
+    }
+    glutPostRedisplay();
+}
+
+void mouse(int button, int state, int x, int y) {
+    if (button == 3) { 
+        size += 0.01f; 
+    }
+    else if (button == 4) { 
+        size -= 0.01f; 
+    }
+    glutPostRedisplay();
+}
+
+void init() {
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(-1.0, 1.0, -1.0, 1.0);
+}
+
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitWindowSize(800, 600);
+    glutCreateWindow("Square Size Adjuster");
+
+    init();
+
+    glutDisplayFunc(display);
+    glutKeyboardFunc(keyboard);
+    glutMouseFunc(mouse);
+
+    glutMainLoop();
+    return 0;
+}
